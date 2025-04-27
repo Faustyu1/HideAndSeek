@@ -9,6 +9,7 @@ A Minecraft plugin that adds a classic hide and seek game to your server. Seeker
 - Game statistics at the end
 - Seeker's stick for finding players
 - Team-based gameplay with color identification
+- Customizable messages and translations
 
 ## 🎯 Commands
 - `/hideandseek start` - Start the game
@@ -17,10 +18,22 @@ A Minecraft plugin that adds a classic hide and seek game to your server. Seeker
 
 ## ⚙️ Configuration
 ```yaml
+# config.yml
 settings:
   hide-time: 30    # Hiding phase duration (seconds)
   seek-time: 300   # Seeking phase duration (seconds)
   glow-time: 30    # Time before players start glowing (seconds)
+```
+
+```yaml
+# language.yml
+messages:
+  game:
+    start: "⚔ The game will start in %seconds% seconds!"
+    # ... more messages
+  player:
+    found: "%seeker% found %player%!"
+    # ... more messages
 ```
 
 ## 🔧 Requirements
@@ -47,6 +60,7 @@ The compiled JAR will be in `build/libs/` directory.
 1. Copy the JAR file to your server's `plugins` folder
 2. Restart the server
 3. Set spawn points using the commands above
+4. Customize messages in `language.yml` if needed
 
 ## 🤝 Contributing
 1. Fork the repository

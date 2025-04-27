@@ -9,12 +9,15 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 
 public class GameEvents implements Listener {
     private final HideAndSeek plugin;
+    private final FileConfiguration lang;
 
     public GameEvents(HideAndSeek plugin) {
         this.plugin = plugin;
+        this.lang = plugin.getLanguageConfig();
     }
 
     @EventHandler
@@ -50,9 +53,10 @@ public class GameEvents implements Listener {
         }
 
         if (event.getItemDrop().getItemStack().getItemMeta() != null &&
-            event.getItemDrop().getItemStack().getItemMeta().getDisplayName().equals(ChatColor.RED + "Палка искателя")) {
+            event.getItemDrop().getItemStack().getItemMeta().getDisplayName().equals(
+                ChatColor.RED + lang.getString("messages.items.seeker_stick"))) {
             event.setCancelled(true);
-            event.getPlayer().sendMessage(ChatColor.RED + "Вы не можете выбросить палку искателя!");
+            event.getPlayer().sendMessage(ChatColor.RED + lang.getString("messages.items.cant_drop_stick"));
         }
     }
 
@@ -76,7 +80,7 @@ public class GameEvents implements Listener {
         if (plugin.getGameManager().isGameRunning()) {
             event.setCancelled(true);
             Player damager = (Player) event.getDamager();
-            damager.sendMessage(ChatColor.RED + "PvP отключен во время игры!");
+            damager.sendMessage(ChatColor.RED + lang.getString("messages.errors.pvp_disabled"));
         }
     }
 }

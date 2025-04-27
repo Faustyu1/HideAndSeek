@@ -16,6 +16,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.configuration.file.FileConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,16 +31,17 @@ public class GameManager {
     private Team hidersTeam;
     private Team seekersTeam;
     private boolean statsDisplayed = false;
+    private FileConfiguration lang;
 
     public GameManager(HideAndSeek plugin) {
         this.plugin = plugin;
+        this.lang = plugin.getLanguageConfig();
         setupTeams();
     }
 
     private void setupTeams() {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         
-        // Удаляем старые команды если они существуют
         if (scoreboard.getTeam("hiders") != null) {
             scoreboard.getTeam("hiders").unregister();
         }
@@ -47,15 +49,12 @@ public class GameManager {
             scoreboard.getTeam("seekers").unregister();
         }
         
-        // Создаем новые команды
         hidersTeam = scoreboard.registerNewTeam("hiders");
         seekersTeam = scoreboard.registerNewTeam("seekers");
         
-        // Настраиваем цвета и видимость
         hidersTeam.setColor(ChatColor.GREEN);
         seekersTeam.setColor(ChatColor.RED);
         
-        // Скрываем ники
         hidersTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
         seekersTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
     }
@@ -63,10 +62,10 @@ public class GameManager {
     private ItemStack createSeekerStick() {
         ItemStack stick = new ItemStack(Material.STICK);
         ItemMeta meta = stick.getItemMeta();
-        meta.setDisplayName(ChatColor.RED + "Палка искателя");
+        meta.setDisplayName(ChatColor.RED + lang.getString("messages.items.seeker_stick"));
         meta.setUnbreakable(true);
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Используйте для поиска игроков");
+        lore.add(ChatColor.GRAY + lang.getString("messages.items.seeker_stick_lore"));
         meta.setLore(lore);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         stick.setItemMeta(meta);
@@ -93,23 +92,22 @@ public class GameManager {
         }
 
         if (plugin.getSeekersSpawn() == null || plugin.getHidersSpawn() == null) {
-            Bukkit.broadcastMessage(ChatColor.RED + "Точки спавна не установлены!");
+            Bukkit.broadcastMessage(ChatColor.RED + lang.getString("messages.errors.spawn_not_set"));
             return;
         }
 
         isGameRunning = true;
         gameState = GameState.STARTING;
         
-        // Start countdown
         new BukkitRunnable() {
             int countdown = 10;
             
             @Override
             public void run() {
                 if (countdown > 0) {
-                    Bukkit.broadcastMessage(ChatColor.YELLOW + "Игра начнется через " + countdown + " секунд!");
+                    String message = lang.getString("messages.game.start").replace("%seconds%", String.valueOf(countdown));
+                    Bukkit.broadcastMessage(ChatColor.YELLOW + message);
                     
-                    // Звук обратного отсчета
                     if (countdown <= 5) {
                         for (Player player : Bukkit.getOnlinePlayers()) {
                             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f);
@@ -119,7 +117,6 @@ public class GameManager {
                     countdown--;
                 } else {
                     cancel();
-                    // Звук начала игры
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
                     }
@@ -170,18 +167,16 @@ public class GameManager {
         timeLeft = plugin.getConfig().getInt("settings.seek-time");
         statsDisplayed = false;
 
-        // Announce hunting phase
-        Bukkit.broadcastMessage(ChatColor.RED + "§l⚔ Жюри вышли на охоту! ⚔");
+        Bukkit.broadcastMessage(ChatColor.RED + lang.getString("messages.game.hunting_phase"));
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.sendTitle(
-                ChatColor.RED + "⚔ Охота началась! ⚔",
-                ChatColor.YELLOW + "Жюри вышли на поиски игроков",
+                ChatColor.RED + lang.getString("messages.game.hunting_title"),
+                ChatColor.YELLOW + lang.getString("messages.game.hunting_subtitle"),
                 10, 70, 20
             );
             player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 1.0f);
         }
 
-        // Release seekers
         for (Player seeker : seekers) {
             seeker.teleport(plugin.getHidersSpawn());
             seeker.setGlowing(true);
@@ -195,17 +190,7 @@ public class GameManager {
                     return;
                 }
 
-                if (timeLeft <= 0) {
-                    cancel();
-                    if (!statsDisplayed) {
-                        displayGameStats();
-                        statsDisplayed = true;
-                        endGame();
-                    }
-                    return;
-                }
-                
-                if (players.isEmpty()) {
+                if (timeLeft <= 0 || players.isEmpty()) {
                     cancel();
                     if (!statsDisplayed) {
                         displayGameStats();
@@ -217,22 +202,20 @@ public class GameManager {
 
                 int glowTime = plugin.getConfig().getInt("settings.glow-time");
                 
-                // Предупреждение за минуту до подсветки
                 if (timeLeft == glowTime + 30) {
-                    Bukkit.broadcastMessage(ChatColor.YELLOW + "⚠ До включения подсветки игроков осталась 1 минута!");
+                    Bukkit.broadcastMessage(ChatColor.YELLOW + lang.getString("messages.game.glow_warning"));
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.0f);
                     }
                 }
 
-                // Включение подсветки
                 if (timeLeft == glowTime) {
-                    Bukkit.broadcastMessage(ChatColor.RED + "⚠ Внимание! " + ChatColor.YELLOW + "Все игроки подсвечены!");
+                    Bukkit.broadcastMessage(ChatColor.RED + lang.getString("messages.game.glow_activated"));
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
                         player.sendTitle(
-                            ChatColor.RED + "⚠ Подсветка активирована!",
-                            ChatColor.YELLOW + "Все игроки видны",
+                            ChatColor.RED + lang.getString("messages.game.glow_title"),
+                            ChatColor.YELLOW + lang.getString("messages.game.glow_subtitle"),
                             10, 40, 10
                         );
                     }
@@ -264,11 +247,13 @@ public class GameManager {
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f);
         }
         
-        Bukkit.broadcastMessage(ChatColor.RED + seeker.getName() + ChatColor.YELLOW + " нашел " + 
-                              ChatColor.GREEN + player.getName() + ChatColor.YELLOW + "!");
+        String foundMessage = lang.getString("messages.player.found")
+            .replace("%seeker%", ChatColor.RED + seeker.getName())
+            .replace("%player%", ChatColor.GREEN + player.getName());
+        Bukkit.broadcastMessage(ChatColor.YELLOW + foundMessage);
         
         if (players.isEmpty() && !statsDisplayed) {
-            Bukkit.broadcastMessage(ChatColor.GREEN + "Все игроки найдены! Игра окончена!");
+            Bukkit.broadcastMessage(ChatColor.GREEN + lang.getString("messages.game.all_players_found"));
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
             }
@@ -289,8 +274,9 @@ public class GameManager {
 
     private void updateActionBar() {
         String timeMessage = formatTime(timeLeft);
-        String playersMessage = ChatColor.GREEN + "Игроков осталось: " + ChatColor.WHITE + players.size();
-        String message = ChatColor.YELLOW + "Время: " + ChatColor.WHITE + timeMessage + " " + playersMessage;
+        String message = lang.getString("messages.game.time_remaining")
+            .replace("%time%", timeMessage)
+            .replace("%players%", String.valueOf(players.size()));
         
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
@@ -339,7 +325,7 @@ public class GameManager {
         seekers.clear();
         foundPlayers.clear();
         
-        Bukkit.broadcastMessage(ChatColor.GREEN + "Игра завершена!");
+        Bukkit.broadcastMessage(ChatColor.GREEN + lang.getString("messages.game.game_over"));
     }
 
     public boolean isGameRunning() {
@@ -368,9 +354,12 @@ public class GameManager {
         int totalPlayers = players.size() + foundPlayers.size();
         int foundCount = foundPlayers.size();
         
-        Bukkit.broadcastMessage(ChatColor.GOLD + "═══════ Результаты игры ═══════");
-        Bukkit.broadcastMessage(ChatColor.YELLOW + "Найдено игроков: " + ChatColor.WHITE + foundCount + 
-                              ChatColor.YELLOW + " из " + ChatColor.WHITE + totalPlayers);
+        Bukkit.broadcastMessage(ChatColor.GOLD + lang.getString("messages.game.stats_header"));
+        
+        String foundMessage = lang.getString("messages.game.stats_found")
+            .replace("%found%", String.valueOf(foundCount))
+            .replace("%total%", String.valueOf(totalPlayers));
+        Bukkit.broadcastMessage(ChatColor.YELLOW + foundMessage);
         
         if (!players.isEmpty()) {
             StringBuilder survivors = new StringBuilder();
@@ -380,10 +369,12 @@ public class GameManager {
                 }
                 survivors.append(ChatColor.GREEN + player.getName());
             }
-            Bukkit.broadcastMessage(ChatColor.YELLOW + "Выжившие: " + survivors.toString());
+            String survivorsMessage = lang.getString("messages.game.stats_survivors")
+                .replace("%players%", survivors.toString());
+            Bukkit.broadcastMessage(ChatColor.YELLOW + survivorsMessage);
         }
         
-        Bukkit.broadcastMessage(ChatColor.GOLD + "═══════════════════════════");
+        Bukkit.broadcastMessage(ChatColor.GOLD + lang.getString("messages.game.stats_footer"));
     }
 
     enum GameState {

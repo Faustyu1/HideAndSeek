@@ -1,0 +1,48 @@
+messages:
+  game:
+    start: "⚔ The game will start in %seconds% seconds!"
+    hunting_phase: "§l⚔ Seekers are on the hunt! ⚔"
+    hunting_title: "⚔ The hunt has begun! ⚔"
+    hunting_subtitle: "Seekers are looking for players"
+    all_players_found: "All players have been found! Game over!"
+    game_over: "Game Over!"
+    time_remaining: "Time: %time% Players left: %players%"
+    glow_warning: "⚠ Players will start glowing in 1 minute!"
+    glow_activated: "⚠ Warning! All players are now glowing!"
+    glow_title: "⚠ Glow activated!"
+    glow_subtitle: "All players are visible"
+    stats_header: "═══════ Game Results ═══════"
+    stats_found: "Players found: %found% out of %total%"
+    stats_survivors: "Survivors: %players%"
+    stats_footer: "═══════════════════════════"
+
+  player:
+    found: "%seeker% found %player%!"
+    not_found: "Player not found!"
+    joined_hiders: "You joined the Hiders team!"
+    joined_seekers: "You joined the Seekers team!"
+
+  items:
+    seeker_stick: "Seeker's Stick"
+    seeker_stick_lore: "Use to find players"
+    cant_drop_stick: "You can't drop the seeker's stick!"
+
+  errors:
+    spawn_not_set: "Spawn points are not set!"
+    game_in_progress: "Game is already in progress!"
+    cant_change_spawn: "Can't change spawn points during the game!"
+    player_only: "This command can only be used by a player!"
+    no_permission: "You don't have permission to use this command!"
+    pvp_disabled: "PvP is disabled during the game!"
+
+  commands:
+    usage: "Command usage:"
+    start: "Start the game"
+    set_seekers: "Set seekers spawn point"
+    set_hiders: "Set hiders spawn point"
+    spawn_set_seekers: "Seekers spawn point has been set!"
+    spawn_set_hiders: "Hiders spawn point has been set!"
+
+teams:
+  hiders: "Hiders"
+  seekers: "Seekers" 

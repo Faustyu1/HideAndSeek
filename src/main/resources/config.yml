@@ -10,6 +10,7 @@ locations:
   hiders: {}
 
 settings:
+  language: "ru_ru"  # Available: en_us, ru_ru
   hide-time: 300 # 5 minutes in seconds
   seek-time: 600 # 10 minutes in seconds
   glow-time: 30 # Last 30 seconds glow time

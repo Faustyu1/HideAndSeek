@@ -8,9 +8,10 @@ commands:
   hideandseek:
     description: Main command for Hide and Seek game
     usage: |
-      /<command> start - Начать игру
-      /<command> setseek - Установить точку спавна для жюри
-      /<command> sethiders - Установить точку спавна для игроков
+      /<command> start - Start the game
+      /<command> setseek - Set seekers spawn point
+      /<command> sethiders - Set hiders spawn point
+      /<command> language <en_us|ru_ru> - Change language
     permission: hideandseek.admin
 permissions:
   hideandseek.admin:

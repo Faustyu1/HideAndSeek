@@ -1,0 +1,48 @@
+messages:
+  game:
+    start: "Игра начнется через %seconds% секунд!"
+    hunting_phase: "§l⚔ Жюри вышли на охоту! ⚔"
+    hunting_title: "⚔ Охота началась! ⚔"
+    hunting_subtitle: "Жюри вышли на поиски игроков"
+    all_players_found: "Все игроки найдены! Игра окончена!"
+    game_over: "Игра завершена!"
+    time_remaining: "Время: %time% Игроков осталось: %players%"
+    glow_warning: "⚠ До включения подсветки игроков осталась 1 минута!"
+    glow_activated: "⚠ Внимание! Все игроки подсвечены!"
+    glow_title: "⚠ Подсветка активирована!"
+    glow_subtitle: "Все игроки видны"
+    stats_header: "═══════ Результаты игры ═══════"
+    stats_found: "Найдено игроков: %found% из %total%"
+    stats_survivors: "Выжившие: %players%"
+    stats_footer: "═══════════════════════════"
+
+  player:
+    found: "%seeker% нашел %player%!"
+    not_found: "Игрок не найден!"
+    joined_hiders: "Вы присоединились к команде игроков!"
+    joined_seekers: "Вы присоединились к команде жюри!"
+
+  items:
+    seeker_stick: "Палка искателя"
+    seeker_stick_lore: "Используйте для поиска игроков"
+    cant_drop_stick: "Вы не можете выбросить палку искателя!"
+
+  errors:
+    spawn_not_set: "Точки спавна не установлены!"
+    game_in_progress: "Игра уже запущена!"
+    cant_change_spawn: "Нельзя изменять точки спавна во время игры!"
+    player_only: "Эта команда может быть использована только игроком!"
+    no_permission: "У вас нет прав для использования этой команды!"
+    pvp_disabled: "PvP отключен во время игры!"
+
+  commands:
+    usage: "Использование команд:"
+    start: "Начать игру"
+    set_seekers: "Установить точку спавна для жюри"
+    set_hiders: "Установить точку спавна для игроков"
+    spawn_set_seekers: "Точка спавна для жюри установлена!"
+    spawn_set_hiders: "Точка спавна для игроков установлена!"
+
+teams:
+  hiders: "Игроки"
+  seekers: "Жюри" 
