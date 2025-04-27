@@ -1,6 +1,18 @@
 name: HideAndSeek
-version: '1.0.0'
+version: '1.0'
 main: io.github.hideAndSeek.HideAndSeek
-api-version: '1.21'
-authors: [ faustyu ]
-description: plugin for minecraft tournir
+api-version: '1.20'
+authors: [Faustyu]
+description: Hide and Seek minigame plugin
+commands:
+  hideandseek:
+    description: Main command for Hide and Seek game
+    usage: |
+      /<command> start - Начать игру
+      /<command> setseek - Установить точку спавна для жюри
+      /<command> sethiders - Установить точку спавна для игроков
+    permission: hideandseek.admin
+permissions:
+  hideandseek.admin:
+    description: Allows access to all Hide and Seek commands
+    default: op

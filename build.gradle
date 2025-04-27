@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'io.github'
-version = '1.0.0'
+version = '1.5'
 
 repositories {
     mavenCentral()
