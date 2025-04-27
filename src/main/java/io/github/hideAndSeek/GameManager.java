@@ -190,13 +190,18 @@ public class GameManager {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (!isGameRunning) {
+                    cancel();
+                    return;
+                }
+
                 if (timeLeft <= 0) {
                     cancel();
                     if (!statsDisplayed) {
                         displayGameStats();
                         statsDisplayed = true;
+                        endGame();
                     }
-                    endGame();
                     return;
                 }
                 
@@ -205,8 +210,8 @@ public class GameManager {
                     if (!statsDisplayed) {
                         displayGameStats();
                         statsDisplayed = true;
+                        endGame();
                     }
-                    endGame();
                     return;
                 }
 
@@ -243,7 +248,7 @@ public class GameManager {
     }
 
     public void markPlayerAsFound(Player player, Player seeker) {
-        if (!players.contains(player) || foundPlayers.contains(player)) {
+        if (!isGameRunning || !players.contains(player) || foundPlayers.contains(player)) {
             return;
         }
 
@@ -259,19 +264,16 @@ public class GameManager {
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f);
         }
         
-        // Новое сообщение с информацией о том, кто кого нашел
         Bukkit.broadcastMessage(ChatColor.RED + seeker.getName() + ChatColor.YELLOW + " нашел " + 
                               ChatColor.GREEN + player.getName() + ChatColor.YELLOW + "!");
         
-        if (players.isEmpty()) {
+        if (players.isEmpty() && !statsDisplayed) {
             Bukkit.broadcastMessage(ChatColor.GREEN + "Все игроки найдены! Игра окончена!");
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
             }
-            if (!statsDisplayed) {
-                displayGameStats();
-                statsDisplayed = true;
-            }
+            displayGameStats();
+            statsDisplayed = true;
             endGame();
         }
     }
@@ -302,6 +304,10 @@ public class GameManager {
     }
 
     public void endGame() {
+        if (!isGameRunning) {
+            return;
+        }
+
         isGameRunning = false;
         gameState = GameState.WAITING;
         statsDisplayed = false;
@@ -315,11 +321,9 @@ public class GameManager {
             player.removePotionEffect(PotionEffectType.RESISTANCE);
             player.removePotionEffect(PotionEffectType.SPEED);
             
-            // Удаляем игроков из команд и восстанавливаем видимость ников
             hidersTeam.removeEntry(player.getName());
             seekersTeam.removeEntry(player.getName());
             
-            // Добавляем всех в дефолтную команду, чтобы ники снова стали видимыми
             Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
             Team defaultTeam = scoreboard.getTeam("default");
             if (defaultTeam == null) {
@@ -357,6 +361,10 @@ public class GameManager {
     }
 
     private void displayGameStats() {
+        if (!isGameRunning || statsDisplayed) {
+            return;
+        }
+
         int totalPlayers = players.size() + foundPlayers.size();
         int foundCount = foundPlayers.size();
         
