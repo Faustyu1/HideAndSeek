@@ -1,0 +1,6 @@
+name: HideAndSeek
+version: '1.0.0'
+main: io.github.hideAndSeek.HideAndSeek
+api-version: '1.21'
+authors: [ faustyu ]
+description: plugin for minecraft tournir
