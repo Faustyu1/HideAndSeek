@@ -24,6 +24,7 @@ public final class HideAndSeek extends JavaPlugin {
     private FileConfiguration config;
     private Location seekersSpawn;
     private Location hidersSpawn;
+    private Location endSpawn;
     private List<String> jury;
     private GameManager gameManager;
     private FileConfiguration languageConfig;
@@ -103,6 +104,14 @@ public final class HideAndSeek extends JavaPlugin {
         }
     }
 
+    public void reloadPlugin() {
+        reloadConfig();
+        config = getConfig();
+        loadLanguageConfig();
+        loadJury();
+        loadSpawnLocations();
+    }
+
     public String getCurrentLanguage() {
         return currentLanguage;
     }
@@ -145,6 +154,23 @@ public final class HideAndSeek extends JavaPlugin {
                 }
             }
         }
+
+        if (config.contains("locations.end.world")) {
+            World endWorld = Bukkit.getWorld(config.getString("locations.end.world"));
+            if (endWorld != null) {
+                endSpawn = new Location(
+                    endWorld,
+                    config.getDouble("locations.end.x"),
+                    config.getDouble("locations.end.y"),
+                    config.getDouble("locations.end.z")
+                );
+                
+                if (config.contains("locations.end.yaw")) {
+                    endSpawn.setYaw((float) config.getDouble("locations.end.yaw"));
+                    endSpawn.setPitch((float) config.getDouble("locations.end.pitch"));
+                }
+            }
+        }
     }
 
     public void setSeekersSpawn(Location location) {
@@ -169,6 +195,17 @@ public final class HideAndSeek extends JavaPlugin {
         saveConfig();
     }
 
+    public void setEndSpawn(Location location) {
+        this.endSpawn = location.clone();
+        config.set("locations.end.world", location.getWorld().getName());
+        config.set("locations.end.x", location.getX());
+        config.set("locations.end.y", location.getY());
+        config.set("locations.end.z", location.getZ());
+        config.set("locations.end.yaw", location.getYaw());
+        config.set("locations.end.pitch", location.getPitch());
+        saveConfig();
+    }
+
     @Override
     public void onDisable() {
         if (gameManager != null) {
@@ -190,6 +227,10 @@ public final class HideAndSeek extends JavaPlugin {
 
     public Location getHidersSpawn() {
         return hidersSpawn != null ? hidersSpawn.clone() : null;
+    }
+
+    public Location getEndSpawn() {
+        return endSpawn != null ? endSpawn.clone() : null;
     }
 
     public GameManager getGameManager() {

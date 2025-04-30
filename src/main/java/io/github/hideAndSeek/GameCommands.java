@@ -62,6 +62,15 @@ public class GameCommands implements CommandExecutor {
                 player.sendMessage(ChatColor.GREEN + lang.getString("messages.commands.spawn_set_hiders"));
                 return true;
 
+            case "setend":
+                if (plugin.getGameManager().isGameRunning()) {
+                    player.sendMessage(ChatColor.RED + lang.getString("messages.errors.cant_change_spawn"));
+                    return true;
+                }
+                plugin.setEndSpawn(player.getLocation());
+                player.sendMessage(ChatColor.GREEN + lang.getString("messages.commands.spawn_set_end"));
+                return true;
+
             case "language":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.YELLOW + "Current language: " + plugin.getCurrentLanguage());
@@ -78,6 +87,15 @@ public class GameCommands implements CommandExecutor {
                 player.sendMessage(ChatColor.GREEN + "Language changed to: " + newLang);
                 return true;
 
+            case "reload":
+                if (plugin.getGameManager().isGameRunning()) {
+                    player.sendMessage(ChatColor.RED + lang.getString("messages.errors.cant_reload"));
+                    return true;
+                }
+                plugin.reloadPlugin();
+                player.sendMessage(ChatColor.GREEN + lang.getString("messages.commands.reload"));
+                return true;
+
             default:
                 sendUsage(player);
                 return true;
@@ -92,7 +110,11 @@ public class GameCommands implements CommandExecutor {
                          lang.getString("messages.commands.set_seekers"));
         player.sendMessage(ChatColor.YELLOW + "/hideandseek sethiders " + ChatColor.WHITE + "- " + 
                          lang.getString("messages.commands.set_hiders"));
+        player.sendMessage(ChatColor.YELLOW + "/hideandseek setend " + ChatColor.WHITE + "- " + 
+                         lang.getString("messages.commands.set_end"));
         player.sendMessage(ChatColor.YELLOW + "/hideandseek language <en_us|ru_ru> " + ChatColor.WHITE + 
                          "- Change language");
+        player.sendMessage(ChatColor.YELLOW + "/hideandseek reload " + ChatColor.WHITE + "- " + 
+                         lang.getString("messages.commands.reload"));
     }
 } 

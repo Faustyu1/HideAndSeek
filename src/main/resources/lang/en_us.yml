@@ -40,8 +40,10 @@ messages:
     start: "Start the game"
     set_seekers: "Set seekers spawn point"
     set_hiders: "Set hiders spawn point"
+    set_end: "Set end game teleport point"
     spawn_set_seekers: "Seekers spawn point has been set!"
     spawn_set_hiders: "Hiders spawn point has been set!"
+    spawn_set_end: "End game teleport point has been set!"
 
 teams:
   hiders: "Hiders"

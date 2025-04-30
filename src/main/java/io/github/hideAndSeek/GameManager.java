@@ -68,6 +68,8 @@ public class GameManager {
         lore.add(ChatColor.GRAY + lang.getString("messages.items.seeker_stick_lore"));
         meta.setLore(lore);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         stick.setItemMeta(meta);
         return stick;
     }
@@ -81,9 +83,11 @@ public class GameManager {
         player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, Integer.MAX_VALUE, 255));
         player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
         
-        // Выдаем палку искателя
+        // Выдаем палку искателя во все слоты инвентаря, кроме брони и второй руки
         ItemStack seekerStick = createSeekerStick();
-        player.getInventory().setItem(0, seekerStick);
+        for (int i = 0; i < 36; i++) { // 36 - размер основного инвентаря
+            player.getInventory().setItem(i, seekerStick);
+        }
     }
 
     public void startGame() {
@@ -319,6 +323,13 @@ public class GameManager {
             defaultTeam.addEntry(player.getName());
             
             player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, 1.0f, 1.0f);
+            
+            // Телепортируем всех игроков на точку спавна в конце игры
+            if (plugin.getEndSpawn() != null) {
+                player.teleport(plugin.getEndSpawn());
+            } else if (plugin.getHidersSpawn() != null) {
+                player.teleport(plugin.getHidersSpawn());
+            }
         }
 
         players.clear();
